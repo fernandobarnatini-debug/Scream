@@ -20,8 +20,8 @@ Grab the file for your computer from the **Assets** section below:
 
 New to Scream? Step-by-step guides:
 
-- **[Install on Windows](../blob/main/docs/install-windows.md)**
-- **[Troubleshooting on Windows](../blob/main/docs/troubleshooting-windows.md)**
+- **[Install on Windows](https://github.com/fernandobarnatini-debug/Scream/blob/main/docs/install-windows.md)**
+- **[Troubleshooting on Windows](https://github.com/fernandobarnatini-debug/Scream/blob/main/docs/troubleshooting-windows.md)**
 
 ---
 
@@ -43,16 +43,17 @@ New to Scream? Step-by-step guides:
 
 ### Windows
 
-1. Download and unzip **`Scream-Windows.zip`**. Inside is a single program, **`Scream.exe`**
-   — there's no installer, and you don't need to install anything else (no ".NET" or extra
-   downloads).
+1. Download and unzip **`Scream-Windows.zip`**. Inside is a **Scream** folder holding the
+   program **`Scream.exe`** and its supporting files — there's no installer, and you don't
+   need to install anything else (no ".NET" or extra downloads). Keep the files together
+   in their folder.
 2. Double-click it. Scream lives in the **system tray** near the clock.
 3. On first run, Settings opens so you can **download a voice model** (see the list below).
 4. Default keys: **hold Right Ctrl** to talk (release to type), tap **F9** for hands-free
    mode, **Esc** to cancel. All of these can be changed in Settings.
 5. Optional: turn on **"Start Scream when Windows starts"** in Settings.
 
-Full walkthrough: **[Install on Windows](../blob/main/docs/install-windows.md)**.
+Full walkthrough: **[Install on Windows](https://github.com/fernandobarnatini-debug/Scream/blob/main/docs/install-windows.md)**.
 
 ### macOS
 
@@ -95,7 +96,7 @@ expected, and getting past it is quick:
   Only needed once.
 
 If Windows Defender removes the file entirely, the
-**[Windows troubleshooting guide](../blob/main/docs/troubleshooting-windows.md)** explains
+**[Windows troubleshooting guide](https://github.com/fernandobarnatini-debug/Scream/blob/main/docs/troubleshooting-windows.md)** explains
 how to restore and allow it.
 
 ---

@@ -35,8 +35,10 @@ You need to open it up first.
    Explorer window, or press the **Windows key**, type *Downloads*, and press **Enter**).
 2. Find **`Scream-Windows.zip`**. **Right-click** it and choose **Extract All…**
 3. A window pops up. Click **Extract** in the bottom corner.
-4. A new regular folder called **Scream-Windows** opens up. Inside it you'll see a program
-   called **`Scream`** (it may show as `Scream.exe`, with a little icon next to it).
+4. A new regular folder called **Scream-Windows** opens up. Inside it is a folder called
+   **Scream** — open that one too. You'll see a lot of files; the only one you need is the
+   program called **`Scream`** (it may show as `Scream.exe`, with a little microphone icon).
+   The other files are parts of the app — just leave them where they are.
 
 > **Tip:** If you'd like to keep Scream somewhere tidy, you can drag the **Scream-Windows**
 > folder from Downloads to your **Documents** folder first. It works from anywhere — this
