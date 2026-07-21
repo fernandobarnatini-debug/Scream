@@ -33,8 +33,8 @@ Hold `fn`, say something, let go. That's it.
 The Windows version is a lightweight system-tray app — no installer needed.
 
 1. Download `Scream-Windows.zip` from the [latest release](../../releases/latest).
-2. Unzip it anywhere — for example a new `Scream` folder inside your `Documents`.
-3. Run `Scream.exe`. The first time, Windows SmartScreen may warn that the app is from an unknown publisher: click **More info → Run anyway**. This is only needed once.
+2. Unzip it anywhere — for example inside your `Documents`. It expands to a `Scream` folder.
+3. Open the `Scream` folder and run `Scream.exe` (keep the other files in the folder next to it — they're part of the app). The first time, Windows SmartScreen may warn that the app is from an unknown publisher: click **More info → Run anyway**. This is only needed once.
 4. On first launch, Settings opens automatically. Pick a speech model and click **Download & activate** — the model downloads once and is reused after that.
 5. Hold **Right Ctrl** and talk; release, and what you said is inserted into whatever app you're typing in. Or tap **F9** to start and stop hands-free.
 

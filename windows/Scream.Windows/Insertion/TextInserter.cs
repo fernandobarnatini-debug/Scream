@@ -39,32 +39,100 @@ internal sealed class TextInserter
 
     private static async Task InsertViaPasteAsync(string text)
     {
-        string? backupText = null;
-        try
-        {
-            if (Clipboard.ContainsText())
-                backupText = Clipboard.GetText();
-        }
-        catch (Exception ex)
-        {
-            Logger.Warn($"Could not read existing clipboard: {ex.Message}");
-        }
+        // Back up the WHOLE clipboard (text, images, files, …), not just text, so a
+        // copied image/file survives a dictation.
+        IDataObject? backup = TryBackupClipboard();
 
         SetClipboardText(text);
+        uint ourSeq = GetClipboardSequenceNumber();
+
         await Task.Delay(60);   // let the target app's message loop settle
         SendCtrlV();
 
-        await Task.Delay(300);  // let the paste complete before restoring
-        try
+        // Give slow targets (Electron, loaded PCs) time to consume the paste before we
+        // put the old clipboard back. A synthetic Ctrl+V is a clipboard *read*, so it
+        // never bumps the sequence number — hence a fixed settle rather than polling.
+        await Task.Delay(600);
+
+        RestoreClipboard(backup, ourSeq);
+    }
+
+    /// <summary>
+    /// Copies the current clipboard's formats into a detached object that survives our
+    /// own overwrite. Returns null if the clipboard is empty or unreadable.
+    /// </summary>
+    private static IDataObject? TryBackupClipboard()
+    {
+        for (int attempt = 0; attempt < 3; attempt++)
         {
-            if (backupText != null)
-                SetClipboardText(backupText);
-            else
-                Clipboard.Clear();
+            try
+            {
+                var current = Clipboard.GetDataObject();
+                if (current == null) return null;
+
+                var copy = new DataObject();
+                bool any = false;
+                foreach (var format in current.GetFormats())
+                {
+                    try
+                    {
+                        var value = current.GetData(format);
+                        if (value != null)
+                        {
+                            copy.SetData(format, value);
+                            any = true;
+                        }
+                    }
+                    catch
+                    {
+                        // Skip formats that can't be round-tripped.
+                    }
+                }
+                return any ? copy : null;
+            }
+            catch (Exception ex)
+            {
+                if (attempt == 2)
+                {
+                    Logger.Warn($"Could not back up clipboard: {ex.Message}");
+                    return null;
+                }
+                Thread.Sleep(30);
+            }
         }
-        catch (Exception ex)
+        return null;
+    }
+
+    private static void RestoreClipboard(IDataObject? backup, uint ourSeq)
+    {
+        // Someone wrote the clipboard after us — leave their content alone.
+        if (GetClipboardSequenceNumber() != ourSeq)
         {
-            Logger.Warn($"Could not restore clipboard: {ex.Message}");
+            Logger.Info("Clipboard changed after paste; leaving it as-is");
+            return;
+        }
+
+        // Nothing to restore: leave the transcript on the clipboard rather than
+        // destroying whatever might be there. Never Clear() the user's content.
+        if (backup == null)
+            return;
+
+        for (int attempt = 0; attempt < 3; attempt++)
+        {
+            try
+            {
+                Clipboard.SetDataObject(backup, copy: true);
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (attempt == 2)
+                {
+                    Logger.Warn($"Could not restore clipboard: {ex.Message}");
+                    return;
+                }
+                Thread.Sleep(30);
+            }
         }
     }
 

@@ -97,6 +97,11 @@ internal static class NativeMethods
     [DllImport("user32.dll", SetLastError = true)]
     public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
+    // Increments whenever any app writes the clipboard. Lets us restore only when
+    // our transcript is still the current clipboard content (nobody wrote after us).
+    [DllImport("user32.dll")]
+    public static extern uint GetClipboardSequenceNumber();
+
     // ---- Show a window without stealing focus ----
     public const int SW_SHOWNOACTIVATE = 4;
 

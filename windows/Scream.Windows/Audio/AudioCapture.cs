@@ -18,10 +18,17 @@ internal sealed class AudioCapture : IDisposable
     private float[] _buffer = new float[SampleRate * 8];
     private int _count;
     private volatile float _level;
+    private bool _stopRequested;
 
     /// <summary>Most recent RMS level, 0..1. Safe to read from any thread.</summary>
     public float Level => _level;
 
+    /// <summary>
+    /// Opens the mic and begins capture. This is called off the UI thread (opening a
+    /// device can be slow), so it cooperates with a concurrent Stop/Cancel via
+    /// <c>_stopRequested</c>: if a stop lands before the device is published, the
+    /// device is torn down immediately and nothing leaks.
+    /// </summary>
     public void Start()
     {
         StopDevice();
@@ -29,22 +36,51 @@ internal sealed class AudioCapture : IDisposable
         {
             _count = 0;
             _level = 0f;
-            var device = new WaveInEvent
-            {
-                WaveFormat = new WaveFormat(SampleRate, 16, 1),
-                BufferMilliseconds = 50,
-                NumberOfBuffers = 3,
-            };
-            device.DataAvailable += OnData;
-            device.StartRecording();
-            _waveIn = device;
+            _stopRequested = false;
         }
+
+        var device = new WaveInEvent
+        {
+            WaveFormat = new WaveFormat(SampleRate, 16, 1),
+            BufferMilliseconds = 50,
+            NumberOfBuffers = 3,
+        };
+        device.DataAvailable += OnData;
+
+        try
+        {
+            device.StartRecording();
+        }
+        catch
+        {
+            device.DataAvailable -= OnData;
+            try { device.Dispose(); } catch { /* ignore */ }
+            throw;
+        }
+
+        bool abort;
+        lock (_gate)
+        {
+            abort = _stopRequested;
+            if (!abort) _waveIn = device;
+        }
+
+        if (abort)
+        {
+            // Stop() ran before we published the device — tear it down now.
+            device.DataAvailable -= OnData;
+            try { device.StopRecording(); } catch { /* ignore */ }
+            try { device.Dispose(); } catch { /* ignore */ }
+            return;
+        }
+
         Logger.Info("Microphone capture started");
     }
 
     /// <summary>Stops capture and returns the recorded Float32 samples.</summary>
     public float[] Stop()
     {
+        lock (_gate) { _stopRequested = true; }
         StopDevice();
         lock (_gate)
         {
@@ -59,6 +95,7 @@ internal sealed class AudioCapture : IDisposable
 
     public void Cancel()
     {
+        lock (_gate) { _stopRequested = true; }
         StopDevice();
         lock (_gate)
         {

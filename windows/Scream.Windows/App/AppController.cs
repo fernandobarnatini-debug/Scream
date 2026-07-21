@@ -163,21 +163,34 @@ internal sealed class AppController : IDisposable
             return;
         }
 
-        try
-        {
-            _audio.Start();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("Failed to start microphone", ex);
-            ShowBalloon("Microphone problem",
-                "Scream couldn't start your microphone. Make sure one is connected and allowed.");
-            return;
-        }
-
         _state = SessionState.Recording;
         _pill.ShowListening();
         Logger.Info($"Recording started ({mode})");
+
+        // Open the mic off the UI thread: a slow device open must not stall the
+        // low-level keyboard hook, which is pumped on the UI thread (Windows silently
+        // drops the hook if a callback is starved). AudioCapture is race-safe against
+        // a Stop() that lands before the device finishes opening.
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                _audio.Start();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to start microphone", ex);
+                Post(() =>
+                {
+                    if (_state == SessionState.Recording)
+                    {
+                        EndSession();
+                        ShowBalloon("Microphone problem",
+                            "Scream couldn't start your microphone. Make sure one is connected and allowed.");
+                    }
+                });
+            }
+        });
     }
 
     private async void FinishRecording()
@@ -186,6 +199,17 @@ internal sealed class AppController : IDisposable
         _state = SessionState.Processing;
 
         var samples = _audio.Stop();
+
+        // Guards against empty/near-empty captures (e.g. a very fast release, or the
+        // mic having been aborted mid-open) before handing anything to Whisper.
+        if (samples.Length < AudioCapture.SampleRate / 4)
+        {
+            Logger.Info($"Recording too short ({samples.Length} samples); skipping");
+            EndSession();
+            ShowBalloon("Scream", "That was too quick — hold the key a moment longer while you speak.");
+            return;
+        }
+
         _pill.ShowTranscribing();
 
         var sw = Stopwatch.StartNew();

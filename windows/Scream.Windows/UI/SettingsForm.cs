@@ -50,7 +50,7 @@ internal sealed class SettingsForm : Form
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
         AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(470, 480);
+        ClientSize = new Size(470, 508);
         Padding = new Padding(16);
         try { Icon = TrayApplicationContext.SharedIcon; } catch { /* ignore */ }
 
@@ -84,6 +84,7 @@ internal sealed class SettingsForm : Form
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
         AddRow(root, "Hold to talk", _holdCombo);
+        AddCaption(root, "While Scream is running, this key is reserved for dictation and won't act as a normal key.");
         AddRow(root, "Toggle (tap on/off)", _toggleCombo);
         AddRow(root, "Insert text by", _insertionCombo);
 
@@ -149,6 +150,20 @@ internal sealed class SettingsForm : Form
         control.Margin = new Padding(0, 4, 0, 4);
         root.Controls.Add(control, 0, row);
         root.SetColumnSpan(control, 2);
+    }
+
+    private static void AddCaption(TableLayoutPanel root, string text)
+    {
+        var label = new Label
+        {
+            Text = text,
+            AutoSize = true,
+            MaximumSize = new Size(430, 0),
+            ForeColor = Color.DimGray,
+            Font = new Font(SystemFonts.DefaultFont.FontFamily, 8f, FontStyle.Regular),
+            Margin = new Padding(0, 0, 0, 4),
+        };
+        AddFullRow(root, label);
     }
 
     private static void AddHeader(TableLayoutPanel root, string text)

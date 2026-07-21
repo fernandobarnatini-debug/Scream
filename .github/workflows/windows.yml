@@ -26,20 +26,21 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Publish (self-contained single file)
+      - name: Publish (self-contained, framework files beside the exe)
         shell: pwsh
         run: >
           dotnet publish windows/Scream.Windows/Scream.Windows.csproj
           -c Release
           -r win-x64
           --self-contained
-          -p:PublishSingleFile=true
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          -o publish
+          -o publish/Scream
 
       - name: Zip
         shell: pwsh
-        run: Compress-Archive -Path publish/* -DestinationPath Scream-Windows.zip -Force
+        run: |
+          # Ship a folder, not a bare exe: unzipping yields a single "Scream" folder.
+          Remove-Item publish/Scream/*.pdb -Force -ErrorAction SilentlyContinue
+          Compress-Archive -Path publish/Scream -DestinationPath Scream-Windows.zip -Force
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
