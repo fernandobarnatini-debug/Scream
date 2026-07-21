@@ -23,7 +23,7 @@ Fully local push-to-talk dictation for macOS. Hold a key, speak, release — you
 
 1. Download `Scream-macOS.zip` from the [latest release](../../releases/latest) and unzip it.
 2. Drag `Scream.app` into your **Applications** folder and open it.
-3. macOS will refuse the first launch because the app isn't notarized. Open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to the message about Scream, then confirm. This is only needed once.
+3. macOS will refuse the first launch because the app isn't notarized ("Apple cannot check it for malicious software"). Click **Done** (not "Move to Trash"), then open **System Settings → Privacy & Security**, scroll down to the Security section, click **Open Anyway** next to the message about Scream, and confirm. This is only needed once. If the button doesn't appear, run `xattr -dr com.apple.quarantine /Applications/Scream.app` in Terminal instead.
 4. Follow the in-app setup: grant Microphone and Accessibility permissions and download a model. First activation optimizes the model for the Neural Engine and can take a minute or two — after that it's instant.
 
 Hold `fn`, say something, let go. That's it.
