@@ -1,0 +1,48 @@
+name: Scream
+options:
+  bundleIdPrefix: com.fernando
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+packages:
+  WhisperKit:
+    url: https://github.com/argmaxinc/argmax-oss-swift
+    majorVersion: 1.0.0
+targets:
+  Scream:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/Scream
+    dependencies:
+      - package: WhisperKit
+        product: WhisperKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fernando.scream
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: 1
+        SWIFT_VERSION: "6.0"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: U4ZJR4AQP6
+        CODE_SIGN_IDENTITY: "Apple Development"
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_ENTITLEMENTS: Sources/Scream/Scream.entitlements
+    info:
+      path: Sources/Scream/Info.plist
+      properties:
+        CFBundleDisplayName: Scream
+        CFBundleIconFile: Scream
+        NSMicrophoneUsageDescription: "Scream records your voice while you dictate so it can transcribe it entirely on this Mac."
+        LSApplicationCategoryType: public.app-category.productivity
+  ScreamTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/ScreamTests
+    dependencies:
+      - target: Scream
+    settings:
+      base:
+        DEVELOPMENT_TEAM: U4ZJR4AQP6
+        GENERATE_INFOPLIST_FILE: YES
