@@ -17,7 +17,9 @@ Fully local push-to-talk dictation for macOS. Hold a key, speak, release — you
 - Apple Silicon Mac (the model runs on the Neural Engine)
 - macOS 15.0 or later
 
-## Install (no Xcode required)
+## Install
+
+### macOS (no Xcode required)
 
 1. Download `Scream.zip` from the [latest release](../../releases/latest) and unzip it.
 2. Drag `Scream.app` into your **Applications** folder and open it.
@@ -25,6 +27,20 @@ Fully local push-to-talk dictation for macOS. Hold a key, speak, release — you
 4. Follow the in-app setup: grant Microphone and Accessibility permissions and download a model. First activation optimizes the model for the Neural Engine and can take a minute or two — after that it's instant.
 
 Hold `fn`, say something, let go. That's it.
+
+### Windows
+
+The Windows version is a lightweight system-tray app — no installer needed.
+
+1. Download `Scream-Windows.zip` from the [latest release](../../releases/latest).
+2. Unzip it anywhere — for example a new `Scream` folder inside your `Documents`.
+3. Run `Scream.exe`. The first time, Windows SmartScreen may warn that the app is from an unknown publisher: click **More info → Run anyway**. This is only needed once.
+4. On first launch, Settings opens automatically. Pick a speech model and click **Download & activate** — the model downloads once and is reused after that.
+5. Hold **Right Ctrl** and talk; release, and what you said is inserted into whatever app you're typing in. Or tap **F9** to start and stop hands-free.
+
+Everything runs locally on the PC — no audio or text ever leaves the machine. Scream lives in the system tray (bottom-right, near the clock); right-click its microphone icon for **Settings** or **Quit**. Press **Esc** while the pill is showing to cancel.
+
+**Requirements:** Windows 10 64-bit or later.
 
 ## Build from source
 
